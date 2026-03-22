@@ -1,0 +1,20 @@
+# Session data
+sessions/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# But include compiled engine (these .pyc files ARE the product)
+!_engine/**/*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
