@@ -1,8 +1,8 @@
-# NovaMind CLI Reference
+# CEOBench CLI Reference
 
 ## `novamind-operation`
 
-The primary CLI for interacting with the NovaMind SaaS simulator.
+The primary CLI for interacting with the CEOBench simulator.
 
 ### Session Management
 

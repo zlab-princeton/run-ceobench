@@ -1,4 +1,4 @@
-# NovaMind Tools Reference
+# CEOBench Tools Reference
 
 Complete reference for all available tools. Use these via `./novamind-operation call<tool> --args '{...}'`
 or via the Python API (`import novamind_api as nm`).

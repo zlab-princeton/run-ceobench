@@ -1,5 +1,5 @@
 #!/bin/bash
-# NovaMind Bench — Install
+# CEOBench — Install
 #
 # Checks Python version, installs dependencies, and makes scripts executable.
 #
@@ -10,7 +10,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-echo "NovaMind Bench — Install"
+echo "CEOBench — Install"
 echo "========================"
 
 # ── Step 1: Check Python version (need 3.13+) ──
@@ -34,7 +34,7 @@ if [ -z "$PYTHON" ]; then
     echo "   Install Python 3.13:"
     echo "   • macOS:   brew install python@3.13"
     echo "   • Ubuntu:  sudo apt install python3.13"
-    echo "   • conda:   conda create -n novamind python=3.13"
+    echo "   • conda:   conda create -n ceobench python=3.13"
     echo "   • pyenv:   pyenv install 3.13"
     exit 1
 fi

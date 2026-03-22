@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NovaMind Operation CLI — Manage simulation sessions and interact with the simulator.
+"""CEOBench CLI — Manage simulation sessions and interact with the simulator.
 
 Commands:
     new-session     Create a new simulation session
@@ -467,7 +467,7 @@ def main():
 
     parser = argparse.ArgumentParser(
         prog="novamind-operation",
-        description="NovaMind SaaS Simulation CLI",
+        description="CEOBench Simulation CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

@@ -1,6 +1,6 @@
 # Simulator Instructions
 
-This document describes how the NovaMind SaaS business simulator works. Understanding these mechanics will help you make better decisions.
+This document describes how the CEOBench simulator works. Understanding these mechanics will help you make better decisions.
 
 ## Overview
 

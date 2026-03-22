@@ -1,4 +1,4 @@
-# NovaMind CLI Reference
+# CEOBench CLI Reference
 
 ## novamind-operation
 

@@ -1,4 +1,4 @@
-# NovaMind Bench
+# CEOBench
 
 A SaaS business simulation benchmark. You play as the CEO of NovaMind AI, a B2B/B2C AI SaaS company. Make strategic decisions — pricing, marketing, R&D, infrastructure, enterprise sales — to maximize cash over a simulated time period.
 
@@ -103,7 +103,7 @@ Run with: `./novamind-operation python my_strategy.py`
 ## Directory Structure
 
 ```
-novamind-bench/
+ceobench/
 ├── README.md                  # This file
 ├── install.sh                 # Installation script
 ├── requirements.txt           # Python dependencies

@@ -1,4 +1,4 @@
-"""Basic NovaMind strategy — a simple example agent.
+"""Basic CEOBench strategy — a simple example agent.
 
 Run with:
     ./novamind-operation python examples/basic_strategy.py

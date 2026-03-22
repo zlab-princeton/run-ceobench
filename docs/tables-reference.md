@@ -1,4 +1,4 @@
-# NovaMind Database Tables Reference
+# CEOBench Database Tables Reference
 
 Reference for all queryable database tables. Query via:
 - `./novamind-operation query"SELECT * FROM table_name LIMIT 10"`
