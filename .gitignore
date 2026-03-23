@@ -7,9 +7,6 @@ __pycache__/
 *.pyo
 .venv/
 
-# But include compiled engine (these .pyc files ARE the product)
-!_engine/**/*.pyc
-
 # OS
 .DS_Store
 Thumbs.db

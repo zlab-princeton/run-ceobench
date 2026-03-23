@@ -1,7 +1,7 @@
-# CEOBench Database Tables Reference
+# NovaMind Database Tables Reference
 
 Reference for all queryable database tables. Query via:
-- `./novamind-operation query"SELECT * FROM table_name LIMIT 10"`
+- `novamind-operation query "SELECT * FROM table_name LIMIT 10"`
 - Python: `novamind_api.query("SELECT * FROM table_name LIMIT 10")`
 
 **Note:** Schema introspection queries (PRAGMA, sqlite_master) are blocked.
@@ -38,17 +38,18 @@ Per-customer daily ad revenue breakdown. Only rows where revenue > 0 are recorde
 
 ---
 
-## `competitor_events`
+## `agent_social_media_posts`
 
-HIDDEN TABLE — Competitor product launches that raise user quality expectations
+Social media posts and replies authored by the agent (CEO). Use post_social_media tool to create.
 
 | Column | Description |
 |--------|-------------|
-| `event_id` | INTEGER PRIMARY KEY — Unique event ID |
-| `start_day` | INTEGER — Day the competitor event occurred |
-| `boost_amount` | REAL — How much expected quality was raised for all users |
-| `post_end_day` | INTEGER — Last day of competitor-themed social media buzz |
-| `description` | TEXT — Description of the competitor event |
+| `agent_post_id` | INTEGER PRIMARY KEY — Unique post ID |
+| `day` | INTEGER — Day posted |
+| `content` | TEXT — Post content (max 280 characters) |
+| `reply_to_post_id` | INTEGER — If replying to a customer post, the post_id (NULL for original posts) |
+| `views` | INTEGER — View count (updated next day) |
+| `comment_post_ids` | TEXT — JSON list of post_ids from social_media_posts that are customer comments on this agent post (e.g. [101, 105, 108]) |
 
 ---
 

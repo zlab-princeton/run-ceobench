@@ -1,61 +1,44 @@
 #!/bin/bash
-# CEOBench — Install
+# NovaMind Bench — Quick Install
 #
-# Checks Python version, installs dependencies, and makes scripts executable.
+# Downloads the correct binary for your platform and makes it executable.
 #
 # Usage:
 #   bash install.sh
+#   # or
+#   curl -fsSL <repo-url>/install.sh | bash
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BIN_DIR="$SCRIPT_DIR/bin"
 
-echo "CEOBench — Install"
+PLATFORM=$(uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m)
+BINARY_NAME="novamind-server-${PLATFORM}-${ARCH}"
+BINARY_PATH="$BIN_DIR/$BINARY_NAME"
+
+echo "NovaMind Bench — Install"
 echo "========================"
+echo "Platform: $PLATFORM ($ARCH)"
 
-# ── Step 1: Check Python version (need 3.13+) ──
-PYTHON=""
-for candidate in python3.13 python3 python; do
-    if command -v "$candidate" &>/dev/null; then
-        version=$("$candidate" -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')" 2>/dev/null || echo "0.0")
-        major=$("$candidate" -c "import sys; print(sys.version_info.major)" 2>/dev/null || echo "0")
-        minor=$("$candidate" -c "import sys; print(sys.version_info.minor)" 2>/dev/null || echo "0")
-        if [ "$major" -eq 3 ] && [ "$minor" -ge 13 ]; then
-            PYTHON="$candidate"
-            echo "✅ Python $version found: $(command -v "$candidate")"
-            break
-        fi
-    fi
-done
-
-if [ -z "$PYTHON" ]; then
-    echo "❌ Python 3.13+ is required but not found."
+if [ -f "$BINARY_PATH" ]; then
+    chmod +x "$BINARY_PATH"
+    chmod +x "$SCRIPT_DIR/novamind-operation"
+    echo "✅ Binary found: $BINARY_PATH"
+    echo "✅ CLI ready: $SCRIPT_DIR/novamind-operation"
     echo ""
-    echo "   Install Python 3.13:"
-    echo "   • macOS:   brew install python@3.13"
-    echo "   • Ubuntu:  sudo apt install python3.13"
-    echo "   • conda:   conda create -n ceobench python=3.13"
-    echo "   • pyenv:   pyenv install 3.13"
+    echo "Add to PATH:"
+    echo "  export PATH=\"$SCRIPT_DIR:\$PATH\""
+    echo ""
+    echo "Quick start:"
+    echo "  novamind-operation new-session --days 365"
+    echo "  novamind-operation next-day"
+else
+    echo "❌ Binary not found for your platform: $BINARY_NAME"
+    echo "   Available binaries:"
+    ls "$BIN_DIR"/ 2>/dev/null || echo "   (none found in $BIN_DIR/)"
+    echo ""
+    echo "   You may need to build from source or download the correct binary."
     exit 1
 fi
-
-# ── Step 2: Install Python dependencies ──
-echo ""
-echo "Installing dependencies..."
-"$PYTHON" -m pip install -r "$SCRIPT_DIR/requirements.txt" --quiet
-echo "✅ Dependencies installed"
-
-# ── Step 3: Make scripts executable ──
-chmod +x "$SCRIPT_DIR/novamind-operation"
-chmod +x "$SCRIPT_DIR/novamind-server"
-echo "✅ Scripts ready"
-
-# ── Done ──
-echo ""
-echo "========================"
-echo "✅ Installation complete!"
-echo ""
-echo "Quick start:"
-echo "  cd $SCRIPT_DIR"
-echo "  ./novamind-operation new-session --days 365 --seed 42"
-echo "  ./novamind-operation next-day"

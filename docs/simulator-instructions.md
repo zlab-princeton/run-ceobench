@@ -1,6 +1,6 @@
 # Simulator Instructions
 
-This document describes how the CEOBench simulator works. Understanding these mechanics will help you make better decisions.
+This document describes how the NovaMind SaaS business simulator works. Understanding these mechanics will help you make better decisions.
 
 ## Overview
 
@@ -171,6 +171,7 @@ Daily costs: capacity tier + compute (usage × tier cost) + advertising + operat
 - Posts are publicly visible via `get_social_posts`
 - Sentiment must be inferred from content (sentiment column is hidden)
 - Viral negative posts can significantly damage reputation
+- You can post or reply to customer posts via `post_social_media` (max 280 chars, 1/day) — strong posts go viral. Viral posts can either boost or tank new lead arrival speed for each group depending on whether that customer group likes the post or not
 
 **CRITICAL REQUIREMENT:** You MUST call `log_rationale` EXACTLY ONCE per day, immediately before advancing to the next day. This is NOT optional.
 
