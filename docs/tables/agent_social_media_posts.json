@@ -6,6 +6,7 @@
     "day": "INTEGER \u2014 Day posted",
     "content": "TEXT \u2014 Post content (max 280 characters)",
     "reply_to_post_id": "INTEGER \u2014 If replying to a customer post, the post_id (NULL for original posts)",
-    "views": "INTEGER \u2014 View count (updated next day)"
+    "views": "INTEGER \u2014 View count (updated next day)",
+    "comment_post_ids": "TEXT \u2014 JSON list of post_ids from social_media_posts that are customer comments on this agent post (e.g. [101, 105, 108])"
   }
 }
