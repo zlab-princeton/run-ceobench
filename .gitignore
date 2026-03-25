@@ -3,7 +3,6 @@ sessions/
 
 # Python
 __pycache__/
-*.pyc
 *.pyo
 .venv/
 
