@@ -616,7 +616,8 @@ Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, 
       "description": "List of deals. Each deal = [customer_id, [[plan, price_per_seat, contract_months], ...]]",
       "items": {
         "type": "array",
-        "description": "[customer_id, offerings] where offerings = [[plan, price, months], ...]"
+        "description": "[customer_id, offerings] where offerings = [[plan, price, months], ...]",
+        "items": {}
       }
     }
   },
