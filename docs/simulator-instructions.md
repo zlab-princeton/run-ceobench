@@ -80,7 +80,7 @@ Each customer has a personal quality-price curve:
 - Per-group quality bonus: CUMULATIVE from targeted dev spend (persists after spending stops)
 
 ### Quality Dynamics
-- Development spending improves quality: global improvement = 0.001 × ln(1 + global_spend/1000), targeted per-group improvement = 0.005 × ln(1 + targeted_spend/1000) (5× coefficient, stacks with global)
+- Development spending improves quality: global improvement = 0.006 × ln(1 + global_spend/5000), targeted per-group improvement = 0.030 × ln(1 + targeted_spend/5000) (5× coefficient, stacks with global)
 - Customer expected quality drifts upward over time (global drift + per-group drift)
 - Competitor events occur randomly and raise customer quality expectations across all groups — these are permanent upward shifts that cannot be reversed, only offset via dev spending or R&D breakthroughs
 - R&D research tiers provide permanent quality boosts (10 independent tiers)
@@ -97,7 +97,7 @@ Each customer has a personal quality-price curve:
 ### Negotiation Flow
 - Enterprise customers arrive as negotiation threads (stored in the `enterprise_turns` table)
 - Thread types: `new_lead` (inbound), `renegotiation` (you initiate), `churn_prevention`, `plan_change`
-- You MUST respond with `send_enterprise_deal` using compact tuple format: `deals=[[customer_id, [["plan", price_per_seat, contract_months], ...]]]`
+- You MUST respond with `send_enterprise_deal` using compact tuple format: `deals=[[customer_id, [["plan", price_per_seat, contract_months], ...]]]` (max contract_months = 6)
 - Grace period: 1 day to reply with no penalty
 - Late reply: -0.02 relationship/day after grace period
 - 3-day timeout: if YOU (the agent) do not reply within 3 days, the lead is PERMANENTLY LOST (or existing customer cancels). The clock starts when the customer message arrives — you must call `send_enterprise_deal` within 3 simulation days.
@@ -143,8 +143,8 @@ Daily costs: capacity tier + compute (usage × tier cost) + advertising + operat
 
 ### Development
 - Customer expected quality changes over time
-- Global quality improvement: 0.001 × ln(1 + spend/1000) per day (applies to all groups)
-- Per-group targeting via `set_targeted_dev_spend`: 0.005 × ln(1 + spend/1000) per day (5× coefficient, ACCUMULATES group-specific quality bonus; persists after spending stops)
+- Global quality improvement: 0.006 × ln(1 + spend/5000) per day (applies to all groups)
+- Per-group targeting via `set_targeted_dev_spend`: 0.030 × ln(1 + spend/5000) per day (5× coefficient, ACCUMULATES group-specific quality bonus; persists after spending stops)
 
 ## R&D Research Tiers
 

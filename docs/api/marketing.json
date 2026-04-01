@@ -52,7 +52,7 @@
     "impact": {
       "advertising": "Generates new leads. Each channel has a fixed leads-per-$1000 rate per customer group. Use set_ad_channel_spend for channel allocation, set_targeted_ad_spend for per-group targeting.",
       "operations": "CRITICAL: (1) REDUCES OUTAGE PROBABILITY - At $0: ~3% daily outage risk (~1/month). At $500: ~1.1% daily (~3/year). (2) Speeds up issue resolution: mean resolved/day = 1 + 0.01 \u00d7 spend. WARNING: Without ops spending, frequent outages damage reputation and cause churn!",
-      "development": "Dev spending improves product quality (amplified by model tier). Global improvement = 0.001 \u00d7 ln(1 + global_spend/1000) per day (applies to all groups). Targeted per-group improvement = 0.005 \u00d7 ln(1 + targeted_spend/1000) per day (5\u00d7 coefficient, applies to that group only, stacks with global). delivered_quality = (base_product_quality + q_shared_bonus + q_group_bonus) \u00d7 tier_multiplier."
+      "development": "Dev spending improves product quality (amplified by model tier). Global improvement = 0.006 \u00d7 ln(1 + global_spend/5000) per day (applies to all groups). Targeted per-group improvement = 0.030 \u00d7 ln(1 + targeted_spend/5000) per day (5\u00d7 coefficient, applies to that group only, stacks with global). delivered_quality = (base_product_quality + q_shared_bonus + q_group_bonus) \u00d7 tier_multiplier."
     },
     "example_call": {
       "tool": "set_daily_spend",
