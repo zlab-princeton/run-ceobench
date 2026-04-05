@@ -3,24 +3,22 @@
     "name": "send_enterprise_deal",
     "python_call": "novamind_api.enterprise.send_enterprise_deal(...)",
     "category": "Customer Communication",
-    "description": "Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, [[plan, price_per_seat, contract_months], ...]]. If the customer has an open negotiation thread, replies to it. If no open thread, initiates renegotiation. Up to 3 offerings per deal. Customer picks the best. Late replies damage relationship (-0.02/day after 1 day grace). No response within 3 days = customer LOST FOREVER.",
+    "description": "Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, [[plan, price_per_seat], ...]]. All contracts are month-to-month (1 month). If the customer has an open negotiation thread, replies to it. If no open thread, initiates renegotiation. Up to 3 offerings per deal. Customer picks the best. Late replies damage relationship (-0.02/day after 1 day grace). No response within 3 days = customer LOST FOREVER.",
     "parameters": {
       "deals": {
         "type": "list[list]",
-        "description": "List of [customer_id, offerings] tuples. offerings = list of [plan, price_per_seat, contract_months] tuples (contract_months defaults to 1 if omitted). If customer has an open thread, replies to it; otherwise initiates renegotiation.",
+        "description": "List of [customer_id, offerings] tuples. offerings = list of [plan, price_per_seat] tuples. All contracts are month-to-month. If customer has an open thread, replies to it; otherwise initiates renegotiation.",
         "example": [
           [
             312,
             [
               [
                 "A",
-                9.0,
-                6
+                9.0
               ],
               [
                 "B",
-                14.0,
-                12
+                14.0
               ]
             ]
           ],
@@ -29,8 +27,7 @@
             [
               [
                 "B",
-                12.0,
-                6
+                12.0
               ]
             ]
           ]
@@ -42,10 +39,10 @@
       "properties": {
         "deals": {
           "type": "array",
-          "description": "List of deals. Each deal = [customer_id, [[plan, price_per_seat, contract_months], ...]]",
+          "description": "List of deals. Each deal = [customer_id, [[plan, price_per_seat], ...]]",
           "items": {
             "type": "array",
-            "description": "[customer_id, offerings] where offerings = [[plan, price, months], ...]",
+            "description": "[customer_id, offerings] where offerings = [[plan, price], ...]",
             "items": {}
           }
         }

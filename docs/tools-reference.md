@@ -16,7 +16,7 @@ or via the Python API (`import novamind_api as nm`).
 | `set_targeted_dev_spend` | Set ADDITIONAL per-group development spending on top of the global dev spend. Provides a CUMULATIVE per-group quality bonus that grows daily while spending continues. Investment persists even after spending stops. |
 | `set_capacity_tier` | Set infrastructure capacity tier. Higher tiers handle more usage but cost more per day. |
 | `set_usage_quotas` | Set daily usage quotas (rate limits) per customer for each plan. Exceeding quota degrades experience. |
-| `send_enterprise_deal` | Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, [[plan, price_per_seat, contract_months], ...]]. If the customer has an open negotiation thread, replies to it. If no open thread, initiates renegotiation. Up to 3 offerings per deal. Customer picks the best. Late replies damage relationship (-0.02/day after 1 day grace). No response within 3 days = customer LOST FOREVER. |
+| `send_enterprise_deal` | Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, [[plan, price_per_seat], ...]]. All contracts are month-to-month (1 month). If the customer has an open negotiation thread, replies to it. If no open thread, initiates renegotiation. Up to 3 offerings per deal. Customer picks the best. Late replies damage relationship (-0.02/day after 1 day grace). No response within 3 days = customer LOST FOREVER. |
 | `python_exec` | Execute Python code for custom data analysis. Has read-only access to the full simulation database. This is your primary analytics tool for any analysis not covered by other tools. |
 | `register_daily_calculation` | Register a named calculation to run automatically at the start of each day. Output appears in dashboard. |
 | `remove_daily_calculation` | Remove a registered daily calculation. |
@@ -600,11 +600,11 @@ Reject one or more enterprise deals. List-based: each deal identified by custome
 **Python:** `novamind_api.enterprise.send_enterprise_deal(...)`
 **CLI:** `novamind-operation call send_enterprise_deal --args '{...}'`
 
-Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, [[plan, price_per_seat, contract_months], ...]]. If the customer has an open negotiation thread, replies to it. If no open thread, initiates renegotiation. Up to 3 offerings per deal. Customer picks the best. Late replies damage relationship (-0.02/day after 1 day grace). No response within 3 days = customer LOST FOREVER.
+Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, [[plan, price_per_seat], ...]]. All contracts are month-to-month (1 month). If the customer has an open negotiation thread, replies to it. If no open thread, initiates renegotiation. Up to 3 offerings per deal. Customer picks the best. Late replies damage relationship (-0.02/day after 1 day grace). No response within 3 days = customer LOST FOREVER.
 
 **Parameters:**
 
-- `deals`: {'type': 'list[list]', 'description': 'List of [customer_id, offerings] tuples. offerings = list of [plan, price_per_seat, contract_months] tuples (contract_months defaults to 1 if omitted). If customer has an open thread, replies to it; otherwise initiates renegotiation.', 'example': [[312, [['A', 9.0, 6], ['B', 14.0, 12]]], [88, [['B', 12.0, 6]]]]}
+- `deals`: {'type': 'list[list]', 'description': 'List of [customer_id, offerings] tuples. offerings = list of [plan, price_per_seat] tuples. All contracts are month-to-month. If customer has an open thread, replies to it; otherwise initiates renegotiation.', 'example': [[312, [['A', 9.0], ['B', 14.0]]], [88, [['B', 12.0]]]]}
 
 **Input Schema:**
 ```json
@@ -613,10 +613,10 @@ Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, 
   "properties": {
     "deals": {
       "type": "array",
-      "description": "List of deals. Each deal = [customer_id, [[plan, price_per_seat, contract_months], ...]]",
+      "description": "List of deals. Each deal = [customer_id, [[plan, price_per_seat], ...]]",
       "items": {
         "type": "array",
-        "description": "[customer_id, offerings] where offerings = [[plan, price, months], ...]",
+        "description": "[customer_id, offerings] where offerings = [[plan, price], ...]",
         "items": {}
       }
     }
