@@ -49,7 +49,7 @@
       "current": "Dict[str, float] \u2014 final prices for all plans {'A': float, 'B': float, 'C': float}",
       "_access": "result['current']['A'] \u2192 current price of plan A"
     },
-    "impact": "Affects customer acquisition (higher prices = fewer sign-ups), churn (price vs value), and revenue. Changes take effect on next_day.",
+    "impact": "Affects customer acquisition (higher prices = fewer sign-ups), churn (price vs value), and revenue. Changes take effect on next_week.",
     "example_call": {
       "tool": "set_prices",
       "arguments": {
