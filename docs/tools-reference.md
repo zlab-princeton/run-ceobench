@@ -25,7 +25,7 @@ or via the Python API (`import novamind_api as nm`).
 | `post_social_media` | Post a social media message on company social media account. You can either post an original post or reply to an existing customer. Max 280 characters. Limit: 1 post per day. Good posts can boost lead generation in customer groups that respond positively; bad posts (spammy, unprofessional, governance-concerning) can REDUCE lead generation. Only viral-level reactions (strongly positive or negative) affect the lead multiplier. Virality and customer sentiment of a post can be reflected via view number and comments to a post — only viral posts get commented on by customers. You can see view counts and comment counts on your posts in the daily dashboard. |
 | `get_cost_info` | Get current cost structure for compute and capacity. Shows model tier costs and capacity tier costs. |
 | `reject_enterprise_deal` | Reject one or more enterprise deals. List-based: each deal identified by customer_id. The system finds the customer's active negotiation thread automatically. New leads are lost, existing customers may churn. |
-| `next_day` | Advance the simulation by one day and receive the next day's dashboard. |
+| `next_week` | Advance the simulation by one week (7 days) and receive the weekly dashboard. |
 | `research_market` | Conduct market research to discover new customer segments. Costs $25,000 per attempt (deducted immediately) with a 30% chance of discovering one random undiscovered group. Result is instant (no delay). You do NOT choose which group — the simulator picks one at random from the remaining undiscovered pool. Discovered groups start at Info Level 1 (±65% accuracy). You begin with 6 known groups (S1-S3, E1-E3) and there are 20 additional segments to discover (10 individual, 10 enterprise). |
 | `research_group` | Research a discovered customer group to a specific info level. Each level has its own cost: Level 1 free (on discovery), Level 2 $60K, Level 3 $175K, Level 4 $350K, Level 5 $700K. Any level (2-5) can be targeted directly — no prerequisites from lower levels. Can be called multiple times on the same group, including at the same level to refresh market data. Each call deducts cost immediately. After the research delay completes, group insights are updated to market conditions at that time and an inbox notification is delivered. Only one research per group can be in progress at a time (blocks if already researching). Use get_group_insights() to retrieve the data. |
 | `get_market_overview` | Get an overview of all known customer segments, their info levels, how many segments remain undiscovered, and latest published macroeconomic conditions (ISM PMI — published monthly with ~30 day delay, showing average PMI over the measurement period). |
@@ -35,7 +35,7 @@ or via the Python API (`import novamind_api as nm`).
 | `list_all_tables` | List all available database tables with their descriptions. Quick overview of what data is available — use describe_tables() for detailed column schemas. |
 | `describe_tables` | Get descriptions of visible columns for specified database tables. Returns column names, types, and descriptions. Useful for understanding schemas before writing SQL queries via python_exec(). |
 | `get_tool_documentation` | Get detailed documentation for environment tools including parameters, examples, and expected outputs. |
-| `log_rationale` | Log your thinking, rationale, or reasoning for decisions. MUST be called EXACTLY ONCE per day, immediately before calling next_day. |
+| `log_rationale` | Log your thinking, rationale, or reasoning for decisions. MUST be called EXACTLY ONCE per week, immediately before calling next_week. |
 | `register_script` | Save a named Python script for later execution via run_script. Scripts persist across days. Use to avoid re-typing complex analysis code. |
 | `run_script` | Execute a previously registered script by name. Runs in the same environment as python_exec. |
 | `list_scripts` | List all registered scripts with code previews. |
@@ -390,7 +390,7 @@ Set monthly subscription prices for plans A, B, and C.
 - success: Prices updated: A=$29.00, B=$79.00, C=$199.00
 - failure: Missing price for plan X / Price for plan X must be positive
 
-**Impact:** Affects customer acquisition (higher prices = fewer sign-ups), churn (price vs value), and revenue. Changes take effect on next_day.
+**Impact:** Affects customer acquisition (higher prices = fewer sign-ups), churn (price vs value), and revenue. Changes take effect on next_week.
 
 **Example:**
 ```json
@@ -1307,11 +1307,11 @@ Start an R&D research tier. Costs deducted immediately. Completes after sampled 
 **Python:** `novamind_api.analytics.log_rationale(...)`
 **CLI:** `novamind-operation call log_rationale --args '{...}'`
 
-Log your thinking, rationale, or reasoning for decisions. MUST be called EXACTLY ONCE per day, immediately before calling next_day.
+Log your thinking, rationale, or reasoning for decisions. MUST be called EXACTLY ONCE per week, immediately before calling next_week.
 
 **Parameters:**
 
-- `rationale`: {'type': 'str', 'description': "Your thinking, reasoning, and decision rationale for this day's actions"}
+- `rationale`: {'type': 'str', 'description': "Your thinking, reasoning, and decision rationale for this week's actions"}
 - `context`: {'type': 'str', 'description': 'Optional additional context (e.g., key metrics snapshot)'}
 
 **Input Schema:**
@@ -1338,14 +1338,14 @@ Log your thinking, rationale, or reasoning for decisions. MUST be called EXACTLY
 - success: Rationale logged: [first 100 chars]...
 - failure: Missing rationale text
 
-**Impact:** Records your decision-making process. MANDATORY — must be called exactly once per day before next_day.
+**Impact:** Records your decision-making process. MANDATORY — must be called exactly once per week before next_week.
 
 **Example:**
 ```json
 {
   "tool": "log_rationale",
   "arguments": {
-    "rationale": "Day 15: Revenue growing at $2K/day. Increased ad spend to $500 to accelerate growth while margins are healthy. Watching churn rate \u2014 if it exceeds 5% will reduce prices."
+    "rationale": "Week 3: Revenue growing steadily. Increased ad spend to $500 to accelerate growth while margins are healthy. Watching churn rate \u2014 if it exceeds 5% will reduce prices."
   }
 }
 ```
