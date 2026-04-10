@@ -22,15 +22,15 @@ bash install.sh
 # 2. Create a new simulation session
 ./novamind-operation new-session --days 365 --seed 42
 
-# 3. Advance to the first day (prints dashboard with metrics)
-./novamind-operation next-day
+# 3. Advance to the first week (prints dashboard with metrics)
+./novamind-operation next-week
 
 # 4. Make decisions using tools
 ./novamind-operation call set_prices --args '{"A": 25, "B": 69, "C": 179}'
 ./novamind-operation call set_daily_spend --args '{"advertising": 5000, "operations": 2000, "development": 3000}'
 
-# 5. Advance to the next day and see results
-./novamind-operation next-day
+# 5. Advance to the next week and see results
+./novamind-operation next-week
 
 # 6. Query the database for insights
 ./novamind-operation query "SELECT group_id, COUNT(*) as n FROM subscriptions WHERE status='active' GROUP BY group_id"
@@ -48,7 +48,7 @@ bash install.sh
 | Command | Description |
 |---------|-------------|
 | `new-session` | Create a new simulation session |
-| `next-day` | Advance simulation by one day |
+| `next-week` | Advance simulation by one week (7 days) |
 | `python <script.py>` | Execute a Python script with `novamind_api` available |
 | `python-c "<code>"` | Execute inline Python code |
 | `call <tool> --args '{...}'` | Call a simulator tool directly |

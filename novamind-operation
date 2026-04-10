@@ -3,7 +3,7 @@
 
 Commands:
     new-session     Create a new simulation session
-    next-day        Advance the simulation by one day
+    next-week       Advance the simulation by one week (7 days)
     python          Execute a Python script with novamind_api available
     python-c        Execute inline Python code with novamind_api available
     call            Call a simulator tool directly
@@ -242,11 +242,11 @@ def cmd_new_session(args):
     print(result.stdout.strip())
 
 
-def cmd_next_day(args):
+def cmd_next_week(args):
     session_id = _resolve_session(args.session)
     port = _ensure_server_running(session_id)
 
-    result = _api_call(port, "POST", "/next-day")
+    result = _api_call(port, "POST", "/next-week")
 
     if result.get("success"):
         # Print dashboard (the main output the agent sees)
@@ -254,7 +254,7 @@ def cmd_next_day(args):
         print(dashboard)
         # Log to history
         _log_history(session_id, {
-            "type": "next_day",
+            "type": "next_week",
             "day": result.get("day"),
             "timestamp": time.time(),
         })
@@ -472,7 +472,7 @@ def main():
         epilog="""
 Examples:
   ./novamind-operation new-session --days 365 --seed 42
-  ./novamind-operation next-day
+  ./novamind-operation next-week
   ./novamind-operation python my_strategy.py
   ./novamind-operation python-c "import novamind_api as nm; nm.pricing.set_prices(A=25)"
   ./novamind-operation call set_prices --args '{"A": 29.99, "B": 69.99}'
@@ -492,8 +492,8 @@ Examples:
     p.add_argument("--seed", type=int, default=42, help="Random seed (default: 42)")
     p.add_argument("--cash", type=float, default=1_000_000.0, help="Initial cash (default: 1000000)")
 
-    # next-day
-    p = subparsers.add_parser("next-day", help="Advance simulation by one day")
+    # next-week
+    p = subparsers.add_parser("next-week", help="Advance simulation by one week (7 days)")
     p.add_argument("--session", type=str, default=None, help="Session ID (default: latest)")
 
     # python
@@ -537,7 +537,7 @@ Examples:
 
     cmd_map = {
         "new-session": cmd_new_session,
-        "next-day": cmd_next_day,
+        "next-week": cmd_next_week,
         "python": cmd_python,
         "python-c": cmd_python_c,
         "call": cmd_call,

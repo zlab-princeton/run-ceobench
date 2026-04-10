@@ -3,7 +3,7 @@
 Run with:
     ./novamind-operation python examples/autoplay_loop.py
 
-This demonstrates how to combine strategy + next-day advancement in a single script.
+This demonstrates how to combine strategy + next-week advancement in a single script.
 """
 import json
 import os
@@ -23,9 +23,9 @@ for i in range(DAYS_TO_PLAY):
     nm.marketing.set_daily_spend(advertising=3000, operations=2000, development=2000)
     nm.analytics.log_rationale(f"Day {day}: Autoplay basic strategy")
 
-    # --- Advance the day ---
-    # Call next-day via the API directly
-    result = nm._client.next_day()
+    # --- Advance the week ---
+    # Call next-week via the API directly
+    result = nm._client.next_week()
 
     if result.get("success"):
         new_day = result.get("day", "?")

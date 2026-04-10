@@ -6,7 +6,6 @@ Entry point for novamind-operation CLI.
 
 Commands:
     next-week   Advance the simulator by one week (7 days)
-    next-day    Alias for next-week (backward compat)
 
 Examples:
     ./novamind-operation next-week
@@ -14,13 +13,13 @@ Examples:
 
 ### Commands
 
-#### `./novamind-operation next-day`
+#### `./novamind-operation next-week`
 
-Advance the simulator to the next day.
+Advance the simulator by one week (7 days).
 
-Calls the API server to step the simulation forward by one day.
+Calls the API server to step the simulation forward by one week.
 Prints the dashboard to stdout, which includes key metrics,
-yesterday's results, and inbox notifications.
+the week's results, and inbox notifications.
 
 **What happens each day (in order):**
 1. Daily calculations run (if registered)
@@ -38,7 +37,7 @@ yesterday's results, and inbox notifications.
 13. Reputation updated
 14. Dashboard built and returned
 
-**Dashboard includes:** CASH, MRR, SUBSCRIBERS, yesterday's metrics
+**Dashboard includes:** CASH, MRR, SUBSCRIBERS, this week's metrics
 (revenue, costs, new/cancelled subs, usage, overload, outages), INBOX
 (new notifications), and current config summary.
 

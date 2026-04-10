@@ -42,8 +42,8 @@ result = nm.query("SELECT SUM(amount) as cash FROM ledger")
 cash = result['rows'][0]['cash'] if result['rows'] and result['rows'][0]['cash'] else 0
 print(f"💰 Cash: ${cash:,.0f}")
 
-# Log rationale (required once per day before next-day)
+# Log rationale (required once per week before next-week)
 nm.analytics.log_rationale(
     f"Day {nm.vars.current_day}: Basic strategy — moderate pricing, balanced spending."
 )
-print("\n✅ Rationale logged. Ready for next-day.")
+print("\n✅ Rationale logged. Ready for next-week.")

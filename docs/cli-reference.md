@@ -46,11 +46,11 @@ novamind-operation stop
 
 ### Simulation Control
 
-#### `novamind-operation next-day [--session ID]`
+#### `novamind-operation next-week [--session ID]`
 Advance the simulation by one day. Prints the daily dashboard with key metrics.
 
 ```bash
-novamind-operation next-day
+novamind-operation next-week
 ```
 
 **Output:** The daily dashboard showing cash, subscribers, MRR, yesterday's metrics, current config, product quality, and inbox notifications.
@@ -135,7 +135,7 @@ novamind-operation history
 novamind-operation history --tail 100
 ```
 
-Shows recent tool calls, queries, next-day advancements, and Python executions.
+Shows recent tool calls, queries, next-week advancements, and Python executions.
 
 ---
 
@@ -145,9 +145,9 @@ All commands accept `--session <id>` to target a specific session. If omitted, t
 
 ```bash
 # These are equivalent (both use latest session):
-novamind-operation next-day
-novamind-operation next-day --session <latest-id>
+novamind-operation next-week
+novamind-operation next-week --session <latest-id>
 
 # Target a specific session:
-novamind-operation next-day --session abc123def456
+novamind-operation next-week --session abc123def456
 ```

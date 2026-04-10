@@ -33,7 +33,7 @@ if [ -f "$BINARY_PATH" ]; then
     echo ""
     echo "Quick start:"
     echo "  novamind-operation new-session --days 365"
-    echo "  novamind-operation next-day"
+    echo "  novamind-operation next-week"
 else
     echo "❌ Binary not found for your platform: $BINARY_NAME"
     echo "   Available binaries:"
