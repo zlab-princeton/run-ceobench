@@ -47,13 +47,13 @@ novamind-operation stop
 ### Simulation Control
 
 #### `novamind-operation next-week [--session ID]`
-Advance the simulation by one day. Prints the daily dashboard with key metrics.
+Advance the simulation by one week (7 days). Prints the weekly dashboard with key metrics.
 
 ```bash
 novamind-operation next-week
 ```
 
-**Output:** The daily dashboard showing cash, subscribers, MRR, yesterday's metrics, current config, product quality, and inbox notifications.
+**Output:** The weekly dashboard showing cash, subscribers, MRR, this week's metrics, current config, product quality, and inbox notifications.
 
 ---
 
