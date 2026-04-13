@@ -1,0 +1,12 @@
+{
+  "run_id": "c52eb458",
+  "model": "zai-org/GLM-5.1-FP8",
+  "provider": "openai",
+  "seed": 42,
+  "scenario": "default",
+  "total_days": 500,
+  "initial_cash": 1000000.0,
+  "agent_type": "bash_agent",
+  "api_server_port": 46041,
+  "session_id": "f1580faeafc3"
+}
