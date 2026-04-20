@@ -69,6 +69,8 @@ Each customer has a personal quality-price curve:
 1. **Subscribes** — if at least one plan meets their quality-price curve
 2. **Is lost forever** — if no plan is acceptable. They do NOT retry or come back later.
 
+*Lead acquisition cost:* each new lead (from ads or organic) incurs a flat $0.5 onboarding cost, charged separately from your ad spend — factor this into your daily burn estimates.
+
 ### Quality Components
 **Delivered Quality = (base_product_quality + q_shared + q_group_bonus) × tier_multiplier + penalties**
 
@@ -91,6 +93,7 @@ Each customer has a personal quality-price curve:
 - If not → may downgrade, switch plans, or cancel
 - Satisfaction affects churn probability
 - Unresolved issues damage satisfaction over time
+- Tenure loyalty (stickiness bonus): longer-subscribed customers get a small additive Q_perceived bonus that grows with `ln(1 + months_subscribed)` — up to ~+0.13 at 12 months — making veterans more tolerant of price hikes and quality drift
 
 ## Enterprise Sales
 
@@ -127,7 +130,7 @@ Each customer has a personal quality-price curve:
 
 ### Costs
 Daily costs: capacity tier + compute (usage × tier cost) + advertising + operations + development + lead acquisition costs
-- **Lead acquisition cost:** $1 per lead, charged for every new lead that arrives regardless of whether they subscribe or are lost
+- **Lead acquisition cost:** $0.5 per lead, charged for every new lead that arrives regardless of whether they subscribe or are lost
 
 ## Spending Effects
 
