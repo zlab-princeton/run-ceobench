@@ -387,6 +387,21 @@ def cmd_query(args):
 
 def cmd_status(args):
     session_id = _resolve_session(args.session)
+
+    # Env-port mode: server is managed by the runner, session.json lives on disk
+    # under the real session id (the `__env__` sentinel is just a marker that we
+    # should not try to start/stop the server ourselves).
+    if session_id == "__env__":
+        real_id = args.session or _get_latest_session()
+        if real_id:
+            meta = _session_meta(real_id)
+        else:
+            meta = {"session_id": "__env__"}
+        meta["server_running"] = True
+        meta["server_port"] = int(os.environ.get("NOVAMIND_API_PORT", 0)) or None
+        print(json.dumps(meta, indent=2))
+        return
+
     meta = _session_meta(session_id)
 
     # Check server status
@@ -429,11 +444,24 @@ def cmd_history(args):
 
 
 def cmd_list_sessions(args):
-    result = _run_server_cmd(["list-sessions"])
-    if result.returncode != 0:
-        print(f"Error: {result.stderr}", file=sys.stderr)
-        sys.exit(1)
-    print(result.stdout.strip())
+    sessions_dir = _sessions_dir()
+    sessions = []
+    if sessions_dir.exists():
+        for d in sorted(sessions_dir.iterdir()):
+            meta_path = d / "session.json"
+            if meta_path.exists():
+                try:
+                    data = json.loads(meta_path.read_text())
+                    sessions.append({
+                        "session_id": data.get("session_id", d.name),
+                        "created_at": data.get("created_at"),
+                        "current_day": data.get("current_day"),
+                        "total_days": data.get("total_days"),
+                        "status": data.get("status"),
+                    })
+                except Exception:
+                    pass
+    print(json.dumps({"sessions": sessions, "count": len(sessions)}, indent=2, default=str))
 
 
 def cmd_stop(args):
