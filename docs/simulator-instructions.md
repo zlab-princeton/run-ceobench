@@ -75,7 +75,7 @@ Each customer has a personal quality-price curve:
 **Delivered Quality = (base_product_quality + q_shared + q_group_bonus) × tier_multiplier + penalties**
 
 - Model tier: acts as a multiplier on product quality (Tier 1=0.60×, Tier 2=0.75×, Tier 3=0.90×, Tier 4=1.00×, Tier 5=1.10×)
-- base_product_quality: Starting product quality (0.50)
+- base_product_quality: Starting product quality (0.20)
 - q_shared: Shared quality bonus from development spending (grows with dev spend)
 - Overload penalty: When usage exceeds capacity
 - Outage penalty: Significant quality drop during outages
@@ -84,7 +84,7 @@ Each customer has a personal quality-price curve:
 ### Quality Dynamics
 - Development spending improves quality: global improvement = 0.0045 × ln(1 + global_spend/5000), targeted per-group improvement = 0.0225 × ln(1 + targeted_spend/5000) (5× coefficient, stacks with global)
 - Customer expected quality drifts upward over time (global drift + per-group drift)
-- Competitor events occur randomly and raise customer quality expectations across all groups — these are permanent upward shifts that cannot be reversed, only offset via dev spending or R&D breakthroughs. Competitor magnitude scales linearly from 1× to 4× over the simulation duration.
+- Competitor events occur randomly and raise customer quality expectations across all groups — these are permanent upward shifts that cannot be reversed, only offset via dev spending or R&D breakthroughs.
 - R&D research tiers provide permanent quality boosts (10 independent tiers)
 
 ### Churn & Plan Changes
@@ -146,8 +146,8 @@ Daily costs: capacity tier + compute (usage × tier cost) + advertising + operat
 
 ### Development
 - Customer expected quality changes over time
-- Global quality improvement: 0.006 × ln(1 + spend/5000) per day (applies to all groups)
-- Per-group targeting via `set_targeted_dev_spend`: 0.030 × ln(1 + spend/5000) per day (5× coefficient, ACCUMULATES group-specific quality bonus; persists after spending stops)
+- See "Quality Dynamics" above for the exact dev-spending quality-improvement formulas (global vs. per-group)
+- Per-group targeting via `set_targeted_dev_spend`: ACCUMULATES a group-specific quality bonus that persists after spending stops
 
 ## R&D Research Tiers
 
