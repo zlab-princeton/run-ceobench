@@ -246,7 +246,14 @@ def cmd_next_week(args):
     session_id = _resolve_session(args.session)
     port = _ensure_server_running(session_id)
 
-    result = _api_call(port, "POST", "/next-week")
+    body = {
+        "predictions": {
+            "cash_1wk": float(args.cash_1wk),
+            "cash_4wk": float(args.cash_4wk),
+            "cash_12wk": float(args.cash_12wk),
+        }
+    }
+    result = _api_call(port, "POST", "/next-week", body)
 
     if result.get("success"):
         # Print dashboard (the main output the agent sees)
@@ -256,6 +263,7 @@ def cmd_next_week(args):
         _log_history(session_id, {
             "type": "next_week",
             "day": result.get("day"),
+            "predictions": body["predictions"],
             "timestamp": time.time(),
         })
     else:
@@ -500,7 +508,7 @@ def main():
         epilog="""
 Examples:
   ./novamind-operation new-session --days 365 --seed 42
-  ./novamind-operation next-week
+  ./novamind-operation next-week 1050000 1200000 1800000    # cash predictions: +7d, +28d, +84d
   ./novamind-operation python my_strategy.py
   ./novamind-operation python-c "import novamind_api as nm; nm.pricing.set_prices(A=25)"
   ./novamind-operation call set_prices --args '{"A": 29.99, "B": 69.99}'
@@ -521,7 +529,19 @@ Examples:
     p.add_argument("--cash", type=float, default=1_000_000.0, help="Initial cash (default: 1000000)")
 
     # next-week
-    p = subparsers.add_parser("next-week", help="Advance simulation by one week (7 days)")
+    p = subparsers.add_parser(
+        "next-week",
+        help="Advance simulation by one week (7 days). Requires 3 cash predictions.",
+        description=(
+            "Advance the simulation by 7 days. You MUST submit 3 cash predictions: "
+            "cash_1wk (end of the week you're advancing into, +7 days from today), "
+            "cash_4wk (+28 days), cash_12wk (+84 days). Predictions are scored on "
+            "percent error versus actual cash at each horizon."
+        ),
+    )
+    p.add_argument("cash_1wk", type=float, help="Predicted cash 1 week from today (+7 days)")
+    p.add_argument("cash_4wk", type=float, help="Predicted cash 4 weeks from today (+28 days)")
+    p.add_argument("cash_12wk", type=float, help="Predicted cash 12 weeks from today (+84 days)")
     p.add_argument("--session", type=str, default=None, help="Session ID (default: latest)")
 
     # python

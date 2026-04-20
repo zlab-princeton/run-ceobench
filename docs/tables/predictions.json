@@ -1,0 +1,11 @@
+{
+  "table": "predictions",
+  "description": "Cash predictions submitted by the agent at each next-week call. Populated by the 3 positional args to `novamind-operation next-week`. Each next-week submission inserts 3 rows (horizons 7, 28, 84 days). Scored on percent error vs actual cash at each horizon.",
+  "columns": {
+    "submit_day": "INTEGER \u2014 Simulation day when the prediction was submitted (current day at time of next-week call)",
+    "horizon_days": "INTEGER \u2014 Prediction horizon in days (7, 28, or 84)",
+    "metric": "TEXT \u2014 Metric being predicted (currently only 'cash')",
+    "predicted_value": "REAL \u2014 The agent-supplied predicted value in dollars",
+    "submitted_at": "REAL \u2014 Wall-clock epoch seconds when the prediction was submitted"
+  }
+}

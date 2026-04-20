@@ -227,6 +227,20 @@ Agent inbox — all notifications and alerts
 
 ---
 
+## `predictions`
+
+Cash predictions submitted by the agent at each next-week call. Populated by the 3 positional args to `novamind-operation next-week`. Each next-week submission inserts 3 rows (horizons 7, 28, 84 days). Scored on percent error vs actual cash at each horizon.
+
+| Column | Description |
+|--------|-------------|
+| `submit_day` | INTEGER — Simulation day when the prediction was submitted (current day at time of next-week call) |
+| `horizon_days` | INTEGER — Prediction horizon in days (7, 28, or 84) |
+| `metric` | TEXT — Metric being predicted (currently only 'cash') |
+| `predicted_value` | REAL — The agent-supplied predicted value in dollars |
+| `submitted_at` | REAL — Wall-clock epoch seconds when the prediction was submitted |
+
+---
+
 ## `research_projects`
 
 R&D research tier invocations (in-progress, completed). 20 independent tiers, repeatable — same tier can be started multiple times. Tiers 1-10: standard R&D. Tiers 11-20: frontier moonshots (higher cost, longer timelines, more variance, better quality/$).

@@ -5,21 +5,35 @@
 Entry point for novamind-operation CLI.
 
 Commands:
-    next-week   Advance the simulator by one week (7 days)
+    next-week   Advance the simulation by one week (7 days).
+                REQUIRES 3 cash predictions as positional args.
 
 Examples:
-    ./novamind-operation next-week
+    ./novamind-operation next-week 1050000 1200000 1800000
 
 
 ### Commands
 
 #### `./novamind-operation next-week`
 
-Advance the simulator by one week (7 days).
+Advance the simulator by one week (7 days) — REQUIRES cash predictions.
+
+Usage:
+    novamind-operation next-week <cash_1wk> <cash_4wk> <cash_12wk>
+
+Arguments (all required, all numeric, in dollars):
+    cash_1wk   Predicted cash 1 week from today (+7 days).
+    cash_4wk   Predicted cash 4 weeks from today (+28 days).
+    cash_12wk  Predicted cash 12 weeks from today (+84 days).
+
+All three predictions are recorded at submission time and scored on
+percent error `(predicted - actual) / actual` once actual cash is known.
+You are evaluated on prediction accuracy at each horizon in addition
+to realized cash.
 
 Calls the API server to step the simulation forward by one week.
 Prints the dashboard to stdout, which includes key metrics,
-the week's results, and inbox notifications.
+this week's results, and inbox notifications.
 
 **What happens each day (in order):**
 1. Daily calculations run (if registered)
@@ -37,14 +51,14 @@ the week's results, and inbox notifications.
 13. Reputation updated
 14. Dashboard built and returned
 
-**Dashboard includes:** CASH, MRR, SUBSCRIBERS, this week's metrics
+**Dashboard includes:** CASH, MRR, SUBSCRIBERS, yesterday's metrics
 (revenue, costs, new/cancelled subs, usage, overload, outages), INBOX
 (new notifications), and current config summary.
 
 **NOTE:** The next_week call may take several minutes at large subscriber
 counts. This is normal — just wait for the response.
 
-Exit code 0 on success, 1 on failure.
+Exit code 0 on success, 1 on failure (including missing predictions).
 
 ## novamind
 
