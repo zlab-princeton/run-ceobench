@@ -26,6 +26,11 @@ import urllib.request
 import urllib.error
 from pathlib import Path
 
+# Ensure deterministic simulator runs. PYTHONHASHSEED must be set before the
+# server binary's embedded Python interpreter starts; subprocess.Popen inherits
+# os.environ by default, so setting it here propagates to the server.
+os.environ.setdefault("PYTHONHASHSEED", "0")
+
 
 def _base_dir() -> Path:
     """Get the base directory (where novamind-operation lives)."""
