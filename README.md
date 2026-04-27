@@ -27,7 +27,9 @@ bash install.sh
 
 # 4. Make decisions using tools
 ./novamind-operation call set_prices --args '{"A": 25, "B": 69, "C": 179}'
-./novamind-operation call set_daily_spend --args '{"advertising": 5000, "operations": 2000, "development": 3000}'
+./novamind-operation call set_daily_spend --args '{"operations": 2000, "development": 3000}'
+# Ad spend is exclusively per-(channel, group):
+./novamind-operation call set_targeted_ad_spend --args '{"targeted_spend": {"linkedin": {"E1": 1500, "E2": 1000}, "search_ads": {"S1": 1500, "S2": 1000}}}'
 
 # 5. Advance to the next week and see results
 ./novamind-operation next-week
@@ -70,8 +72,13 @@ import novamind_api as nm
 # Set prices
 nm.pricing.set_prices(A=25, B=69, C=179)
 
-# Set spending
-nm.marketing.set_daily_spend(advertising=5000, operations=2000, development=3000)
+# Set ops/dev spending
+nm.marketing.set_daily_spend(operations=2000, development=3000)
+# Ad spend is exclusively per-(channel, group)
+nm.marketing.set_targeted_ad_spend(targeted_spend={
+    "linkedin": {"E1": 1500, "E2": 1000},
+    "search_ads": {"S1": 1500, "S2": 1000},
+})
 
 # Check current day
 print(f"Day: {nm.vars.current_day}")

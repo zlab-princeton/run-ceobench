@@ -20,7 +20,15 @@ for i in range(DAYS_TO_PLAY):
 
     # --- Strategy decisions ---
     nm.pricing.set_prices(A=19, B=59, C=149)
-    nm.marketing.set_daily_spend(advertising=3000, operations=2000, development=2000)
+    nm.marketing.set_daily_spend(operations=2000, development=2000)
+    # Ad spend is per (channel, group) — split a $3000/day budget across channels and groups
+    nm.marketing.set_targeted_ad_spend(targeted_spend={
+        "social_media":      {"S1": 600, "S2": 400, "S3": 200},
+        "search_ads":        {"S1": 400, "S2": 300, "S3": 100},
+        "linkedin":          {"E1": 400, "E2": 300, "E3": 100},
+        "content_marketing": {"S1": 50,  "S2": 50,  "S3": 50},
+        "referral_program":  {"S1": 50,  "S2": 50,  "S3": 0},
+    })
     nm.analytics.log_rationale(f"Day {day}: Autoplay basic strategy")
 
     # --- Advance the week ---

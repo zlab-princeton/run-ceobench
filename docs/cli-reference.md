@@ -46,31 +46,19 @@ novamind-operation stop
 
 ### Simulation Control
 
-#### `novamind-operation next-week <12 cash forecasts> [--session ID]`
-Advance the simulation by one week (7 days). **Requires 12 cash forecasts** as positional arguments — for each of FOUR horizons (+7d, +28d, +84d, +182d ~ 6 months) submit a point estimate plus 95% CI lower and upper bounds.
+#### `novamind-operation next-week <cash_1wk> <cash_4wk> <cash_12wk> [--session ID]`
+Advance the simulation by one week (7 days). **Requires 3 cash predictions** as positional arguments — all three are mandatory, numeric (dollars).
 
 ```bash
-novamind-operation next-week \
-    1050000 1000000 1100000 \
-    1200000 1050000 1400000 \
-    1800000 1400000 2300000 \
-    3000000 2000000 4500000
+novamind-operation next-week 1050000 1200000 1800000
 ```
 
-**Arguments (in order):**
-- `cash_1wk_point`, `cash_1wk_lower`, `cash_1wk_upper` — +7-day forecast (point + 95% CI)
-- `cash_4wk_point`, `cash_4wk_lower`, `cash_4wk_upper` — +28-day forecast
-- `cash_12wk_point`, `cash_12wk_lower`, `cash_12wk_upper` — +84-day forecast
-- `cash_26wk_point`, `cash_26wk_lower`, `cash_26wk_upper` — +182-day (~6 month) forecast
+**Arguments:**
+- `cash_1wk`: Predicted cash 1 week from today (+7 days)
+- `cash_4wk`: Predicted cash 4 weeks from today (+28 days)
+- `cash_12wk`: Predicted cash 12 weeks from today (+84 days)
 
-**Constraint per horizon:** `lower <= point <= upper`. The server returns 400 if violated or if any field is missing/non-numeric.
-
-Forecasts are stored in the `predictions` table at submission time. Scored on:
-- **Point percent error:** `(point - actual) / actual` per horizon
-- **95% CI coverage:** does actual cash fall inside `[lower, upper]`?
-- **Sharpness:** interval width relative to actual
-
-The agent is evaluated on prediction accuracy + calibration at each horizon in addition to realized cash.
+Predictions are stored in the `predictions` table at submission time and scored on percent error `(predicted - actual) / actual` when the actual cash at each horizon is known. The agent is evaluated on prediction accuracy at each horizon in addition to realized cash.
 
 **Output:** The weekly dashboard showing cash, subscribers, MRR, this week's metrics, current config, product quality, and inbox notifications.
 

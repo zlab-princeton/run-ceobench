@@ -229,14 +229,16 @@ Agent inbox — all notifications and alerts
 
 ## `predictions`
 
-Cash predictions submitted by the agent at each next-week call. Populated by the 3 positional args to `novamind-operation next-week`. Each next-week submission inserts 3 rows (horizons 7, 28, 84 days). Scored on percent error vs actual cash at each horizon.
+Cash forecasts submitted by the agent at each next-week call. Populated by the 12 positional args to `novamind-operation next-week`. Each next-week submission inserts 4 rows (horizons 7, 28, 84, 182 days) with point estimate plus 95% CI lower/upper bounds. Scored on point percent error, CI coverage (does actual fall in [lower, upper]?), and sharpness (interval width / actual) at each horizon.
 
 | Column | Description |
 |--------|-------------|
 | `submit_day` | INTEGER — Simulation day when the prediction was submitted (current day at time of next-week call) |
-| `horizon_days` | INTEGER — Prediction horizon in days (7, 28, or 84) |
+| `horizon_days` | INTEGER — Prediction horizon in days (7, 28, 84, or 182) |
 | `metric` | TEXT — Metric being predicted (currently only 'cash') |
-| `predicted_value` | REAL — The agent-supplied predicted value in dollars |
+| `predicted_value` | REAL — Agent-supplied point estimate in dollars |
+| `predicted_lower` | REAL — 95% CI lower bound in dollars (NULL for legacy rows) |
+| `predicted_upper` | REAL — 95% CI upper bound in dollars (NULL for legacy rows) |
 | `submitted_at` | REAL — Wall-clock epoch seconds when the prediction was submitted |
 
 ---

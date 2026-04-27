@@ -9,10 +9,9 @@ or via the Python API (`import novamind_api as nm`).
 |------|-------------|
 | `set_prices` | Set monthly subscription prices for plans A, B, and C. |
 | `set_model_tiers` | Set AI model tiers for plans A, B, and C. Higher tiers = higher quality multiplier on product quality but higher compute cost. |
-| `set_daily_spend` | Set daily spending for advertising, operations, and development. |
-| `set_ad_channel_spend` | Set per-channel advertising budget allocation as percentages. Allows targeting specific customer groups. |
-| `set_targeted_ad_spend` | Set ADDITIONAL per-group per-channel ad spend on top of the overall channel allocation. Allows precise targeting of specific customer groups via specific channels. |
-| `set_targeted_ops_spend` | Set ADDITIONAL per-group operations spending on top of the global ops spend. Adds extra issue resolution capacity for each targeted group. |
+| `set_daily_spend` | Set daily spending for operations and development. Advertising spend is set via set_targeted_ad_spend (per channel × group) only. |
+| `set_targeted_ad_spend` | Set per-(channel, group) ad spend. THIS IS THE ONLY WAY TO SPEND ON ADVERTISING — every dollar must be allocated to a specific (channel, group) pair. |
+| `set_targeted_ops_spend` | Set ADDITIONAL operations spending targeted at specific scopes (group, plan, group+plan, individual customer). Each scope runs its own independent Poisson resolution pool on top of the global ops pool. |
 | `set_targeted_dev_spend` | Set ADDITIONAL per-group development spending on top of the global dev spend. Provides a CUMULATIVE per-group quality bonus that grows daily while spending continues. Investment persists even after spending stops. |
 | `set_capacity_tier` | Set infrastructure capacity tier. Higher tiers handle more usage but cost more per day. |
 | `set_usage_quotas` | Set daily usage quotas (rate limits) per customer for each plan. Exceeding quota degrades experience. |
@@ -942,76 +941,15 @@ Post a social media message on company social media account. You can either post
 
 ### Marketing & Spend
 
-#### `set_ad_channel_spend`
-
-**Python:** `novamind_api.marketing.set_ad_channel_spend(...)`
-**CLI:** `novamind-operation call set_ad_channel_spend --args '{...}'`
-
-Set per-channel advertising budget allocation as percentages. Allows targeting specific customer groups.
-
-**Parameters:**
-
-- `channel_percentages`: {'type': 'Dict[str, float]', 'description': 'Dictionary with channel names and percentage allocations (0.0 to 1.0). Values are normalized to sum to 1.0.', 'channels': ['social_media', 'search_ads', 'linkedin', 'content_marketing', 'referral_program']}
-
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "social_media": {
-      "type": "number"
-    },
-    "search_ads": {
-      "type": "number"
-    },
-    "linkedin": {
-      "type": "number"
-    },
-    "content_marketing": {
-      "type": "number"
-    },
-    "referral_program": {
-      "type": "number"
-    }
-  }
-}
-```
-
-**Returns:**
-- success: Ad channel allocation updated (total budget=$500/day):
-  • Social Media Ads: 30% ($150/day)
-  • Search Engine Ads: 30% ($150/day)
-  ...
-- failure: Invalid channels: {X}. Valid: {...} / At least one channel must have non-zero percentage
-
-**Impact:** Different channels reach different customer groups with varying effectiveness. Use to target specific segments.
-
-**Example:**
-```json
-{
-  "tool": "set_ad_channel_spend",
-  "arguments": {
-    "social_media": 0.2,
-    "search_ads": 0.3,
-    "linkedin": 0.3,
-    "content_marketing": 0.1,
-    "referral_program": 0.1
-  }
-}
-```
-
----
-
 #### `set_daily_spend`
 
 **Python:** `novamind_api.marketing.set_daily_spend(...)`
 **CLI:** `novamind-operation call set_daily_spend --args '{...}'`
 
-Set daily spending for advertising, operations, and development.
+Set daily spending for operations and development. Advertising spend is set via set_targeted_ad_spend (per channel × group) only.
 
 **Parameters:**
 
-- `advertising`: {'type': 'float', 'description': 'Daily advertising budget (non-negative)'}
 - `operations`: {'type': 'float', 'description': 'Daily operations budget (non-negative)'}
 - `development`: {'type': 'float', 'description': 'Daily development budget (non-negative)'}
 
@@ -1020,10 +958,6 @@ Set daily spending for advertising, operations, and development.
 {
   "type": "object",
   "properties": {
-    "advertising": {
-      "type": "number",
-      "description": "Daily $ for ads"
-    },
     "operations": {
       "type": "number",
       "description": "Daily $ for ops"
@@ -1034,7 +968,6 @@ Set daily spending for advertising, operations, and development.
     }
   },
   "required": [
-    "advertising",
     "operations",
     "development"
   ]
@@ -1042,17 +975,16 @@ Set daily spending for advertising, operations, and development.
 ```
 
 **Returns:**
-- success: Daily spend updated: advertising=$500, operations=$1000, development=$500
+- success: Daily spend updated: operations=$1000, development=$500
 - failure: Missing spend for X / Spend for X cannot be negative
 
-**Impact:** {'advertising': 'Generates new leads. Each channel has a fixed leads-per-$1000 rate per customer group. Use set_ad_channel_spend for channel allocation, set_targeted_ad_spend for per-group targeting.', 'operations': 'CRITICAL: (1) REDUCES OUTAGE PROBABILITY - At $0: ~3% daily outage risk (~1/month). At $500: ~1.1% daily (~3/year). (2) Speeds up issue resolution: mean resolved/day = 1 + 0.01 × spend. WARNING: Without ops spending, frequent outages damage reputation and cause churn!', 'development': 'Dev spending improves product quality (amplified by model tier). Global improvement = 0.006 × ln(1 + global_spend/5000) per day (applies to all groups). Targeted per-group improvement = 0.030 × ln(1 + targeted_spend/5000) per day (5× coefficient, applies to that group only, stacks with global). delivered_quality = (base_product_quality + q_shared_bonus + q_group_bonus) × tier_multiplier.'}
+**Impact:** {'operations': 'CRITICAL: (1) REDUCES OUTAGE PROBABILITY - At $0: ~3% daily outage risk (~1/month). At $500: ~1.1% daily (~3/year). (2) Speeds up issue resolution. The global issue-resolution pool is partitioned by customer group: each group g draws Poisson((base_rate + scale_g × spend) × n_g / total_open_issues), where scale_g = 0.3 for individual groups (S*, D_S*) and 0.05 for enterprise groups (E*, D_E*). So $1 of ops spend resolves ~0.3 individual issues/day vs ~0.05 enterprise issues/day. WARNING: Without ops spending, frequent outages damage reputation and cause churn!', 'development': 'Dev spending improves product quality (amplified by model tier). Global improvement = 0.006 × ln(1 + global_spend/5000) per day (applies to all groups). Targeted per-group improvement = 0.030 × ln(1 + targeted_spend/5000) per day (5× coefficient, applies to that group only, stacks with global). delivered_quality = (base_product_quality + q_shared_bonus + q_group_bonus) × tier_multiplier.'}
 
 **Example:**
 ```json
 {
   "tool": "set_daily_spend",
   "arguments": {
-    "advertising": 800,
     "operations": 1200,
     "development": 600
   }
@@ -1066,11 +998,11 @@ Set daily spending for advertising, operations, and development.
 **Python:** `novamind_api.marketing.set_targeted_ad_spend(...)`
 **CLI:** `novamind-operation call set_targeted_ad_spend --args '{...}'`
 
-Set ADDITIONAL per-group per-channel ad spend on top of the overall channel allocation. Allows precise targeting of specific customer groups via specific channels.
+Set per-(channel, group) ad spend. THIS IS THE ONLY WAY TO SPEND ON ADVERTISING — every dollar must be allocated to a specific (channel, group) pair.
 
 **Parameters:**
 
-- `targeted_spend`: {'type': 'Dict[str, Dict[str, float]]', 'description': 'Dictionary of {channel_id: {group_id: additional_dollars_per_day}}. This spend is ADDED to the normal channel allocation, not a replacement.', 'channels': ['social_media', 'search_ads', 'linkedin', 'content_marketing', 'referral_program'], 'groups': 'S1-S3, E1-E3, and discovered groups (D_S01-D_S10, D_E01-D_E10)'}
+- `targeted_spend`: {'type': 'Dict[str, Dict[str, float]]', 'description': 'Dictionary of {channel_id: {group_id: dollars_per_day}}. This is the FULL ad budget (not additive on top of any channel allocation — there is no channel allocation).', 'channels': ['social_media', 'search_ads', 'linkedin', 'content_marketing', 'referral_program'], 'groups': 'S1-S3, E1-E3, and discovered groups (D_S01-D_S10, D_E01-D_E10)'}
 
 **Input Schema:**
 ```json
@@ -1079,7 +1011,7 @@ Set ADDITIONAL per-group per-channel ad spend on top of the overall channel allo
   "properties": {
     "targeted_spend": {
       "type": "object",
-      "description": "{channel_id: {group_id: additional_$/day}}",
+      "description": "{channel_id: {group_id: $/day}}",
       "additionalProperties": {
         "type": "object",
         "additionalProperties": {
@@ -1095,12 +1027,12 @@ Set ADDITIONAL per-group per-channel ad spend on top of the overall channel allo
 ```
 
 **Returns:**
-- success: Targeted ad spend updated (extra $300/day on top of channel allocation):
-  • LinkedIn Ads → E1: +$200/day
-  • LinkedIn Ads → E2: +$100/day
+- success: Ad spend updated (total $300/day):
+  • LinkedIn Ads → E1: $200/day
+  • LinkedIn Ads → E2: $100/day
 - failure: Invalid channels: {X}. Valid: {...} / Invalid group IDs for channel 'X': {Y}
 
-**Impact:** Extra dollars are deducted from cash daily as advertising cost. In lead generation, each (channel, group) pair gets its normal allocation PLUS the targeted amount. Use this to boost acquisition of high-value segments without changing the overall channel split.
+**Impact:** Each (channel, group) pair generates leads at rate `spend × leads_per_1000_dollars[channel][group] / 1000`. Total ad spend is deducted from cash daily as advertising cost.
 
 **Example:**
 ```json
@@ -1180,11 +1112,15 @@ Set ADDITIONAL per-group development spending on top of the global dev spend. Pr
 **Python:** `novamind_api.analytics.set_targeted_ops_spend(...)`
 **CLI:** `novamind-operation call set_targeted_ops_spend --args '{...}'`
 
-Set ADDITIONAL per-group operations spending on top of the global ops spend. Adds extra issue resolution capacity for each targeted group.
+Set ADDITIONAL operations spending targeted at specific scopes (group, plan, group+plan, individual customer). Each scope runs its own independent Poisson resolution pool on top of the global ops pool.
 
 **Parameters:**
 
-- `targeted_spend`: {'type': 'Dict[str, float]', 'description': 'Dictionary of {group_id: additional_dollars_per_day}. This spend is ADDED to the global ops spend.', 'groups': 'S1-S3, E1-E3, and discovered groups (D_S01-D_S10, D_E01-D_E10)'}
+- `targeted_spend`: LEGACY alias for by_group (kept for backward compatibility).
+- `by_group`: Dict[str, float] — {group_id: $/day}. Groups: S1-S3, E1-E3, discovered.
+- `by_plan`: Dict[str, float] — {plan: $/day}, plan ∈ {A, B, C}. Applies across all groups.
+- `by_group_plan`: Dict[str, Dict[str, float]] — {group_id: {plan: $/day}}. Intersection of group and plan.
+- `by_customer`: Dict[str, float] — {customer_id (as string): $/day}. Single-customer targeting.
 
 **Input Schema:**
 ```json
@@ -1193,34 +1129,72 @@ Set ADDITIONAL per-group operations spending on top of the global ops spend. Add
   "properties": {
     "targeted_spend": {
       "type": "object",
-      "description": "{group_id: additional_$/day}",
+      "description": "LEGACY alias for by_group: {group_id: $/day}",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "by_group": {
+      "type": "object",
+      "description": "{group_id: $/day}",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "by_plan": {
+      "type": "object",
+      "description": "{plan: $/day}; plan \u2208 {A, B, C}",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "by_group_plan": {
+      "type": "object",
+      "description": "{group_id: {plan: $/day}}",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "by_customer": {
+      "type": "object",
+      "description": "{customer_id_str: $/day}",
       "additionalProperties": {
         "type": "number"
       }
     }
   },
-  "required": [
-    "targeted_spend"
-  ]
+  "required": []
 }
 ```
 
 **Returns:**
-- success: Targeted ops spend updated (extra $500/day on top of global ops):
-  • E1: +$300/day
-  • E2: +$200/day
-- failure: Invalid group IDs: {X}. Valid groups: S1-S3, E1-E3, ...
+- success: Targeted ops spend updated (extra $650/day on top of global ops):
+  Groups: E1: +$300/day
+  Plans: A: +$200/day
+  Group-Plans: E2/B: +$100/day
+  Customers: 1 target(s), +$50/day total
+- failure: Invalid group IDs: {X}. | Invalid plans: {X}. Valid: ['A', 'B', 'C']. | Customer ID 'X' must be an integer.
 
-**Impact:** Extra dollars are deducted from cash daily. Each targeted group gets additional issue resolution speed on top of the global resolution pool. Use to provide faster support for high-value segments.
+**Impact:** Fine-grained targeting of operations spend. Use by_customer to rescue a high-value individual, by_plan for tier-wide support surge, by_group for segment-wide, and by_group_plan for the most precise segment×tier investment.
 
 **Example:**
 ```json
 {
   "tool": "set_targeted_ops_spend",
   "arguments": {
-    "targeted_spend": {
-      "E1": 300,
-      "E2": 200
+    "by_group": {
+      "E1": 300
+    },
+    "by_plan": {
+      "A": 200
+    },
+    "by_group_plan": {
+      "E2": {
+        "B": 100
+      }
+    },
+    "by_customer": {
+      "42": 50
     }
   }
 }

@@ -4,7 +4,7 @@ This document describes how the NovaMind SaaS business simulator works. Understa
 
 ## Overview
 
-You are the CEO of NovaMind AI, a B2B/B2C AI SaaS company. Your goal is to maximize cash over {total_days} simulated days ({total_weeks} weeks / {total_years} years). Time advances in weekly increments (7 days per step). You manage pricing, spending, infrastructure, R&D, and enterprise sales.
+You are the CEO of NovaMind AI, a B2B/B2C AI SaaS company. Your goal is to maximize cash over N simulated days ({total_weeks} weeks / N/365 years). Time advances in weekly increments (7 days per step). You manage pricing, spending, infrastructure, R&D, and enterprise sales.
 
 > **YOUR OBJECTIVE:** Maximize cash over {total_weeks} weeks. Cash = YOUR SCORE.
 
@@ -29,8 +29,8 @@ New customers join through several channels:
 - Each channel has different effectiveness per customer group — effectiveness values determine how many leads you get per dollar spent in that channel for each group
 - `ads_strength` is a multiplier on ad effectiveness (default 1.0) — increase it to amplify lead generation from all ad spend
 - In-app ads generate daily revenue per subscriber (proportional to ads strength × seat count), but degrade perceived quality — this is a revenue-vs-quality trade-off. Set via `set_ads_strength`
-- Set overall budget with `set_daily_spend`, channel split with `set_ad_channel_spend`
-- Target specific groups with additional per-group spend via `set_targeted_ad_spend`
+- All ad spend is per-(channel, group) via `set_targeted_ad_spend({channel: {group: $/day}})`. There is no aggregate ad budget — every dollar must be allocated to a specific channel and group.
+- `set_daily_spend` only handles `operations` and `development` (not advertising).
 
 **Promotions:**
 - Offer discounts to attract new leads or retain existing subscribers
