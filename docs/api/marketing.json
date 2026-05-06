@@ -3,12 +3,8 @@
     "name": "set_daily_spend",
     "python_call": "novamind_api.marketing.set_daily_spend(...)",
     "category": "Marketing & Spend",
-    "description": "Set daily spending for advertising, operations, and development.",
+    "description": "Set daily spending for operations and development. Advertising spend is set via set_targeted_ad_spend (per channel \u00d7 group) only.",
     "parameters": {
-      "advertising": {
-        "type": "float",
-        "description": "Daily advertising budget (non-negative)"
-      },
       "operations": {
         "type": "float",
         "description": "Daily operations budget (non-negative)"
@@ -21,10 +17,6 @@
     "inputSchema": {
       "type": "object",
       "properties": {
-        "advertising": {
-          "type": "number",
-          "description": "Daily $ for ads"
-        },
         "operations": {
           "type": "number",
           "description": "Daily $ for ops"
@@ -35,91 +27,28 @@
         }
       },
       "required": [
-        "advertising",
         "operations",
         "development"
       ]
     },
     "returns": {
-      "success": "Daily spend updated: advertising=$500, operations=$1000, development=$500",
+      "success": "Daily spend updated: operations=$1000, development=$500",
       "failure": "Missing spend for X / Spend for X cannot be negative"
     },
     "output_schema": {
       "updated": "Dict[str, float] \u2014 the spend changes applied (only keys you sent)",
-      "current": "Dict[str, float] \u2014 final spend {'advertising': float, 'operations': float, 'development': float}",
+      "current": "Dict[str, float] \u2014 final spend {'operations': float, 'development': float}",
       "_access": "result['current']['operations'] \u2192 current ops spend"
     },
     "impact": {
-      "advertising": "Generates new leads. Each channel has a fixed leads-per-$1000 rate per customer group. Use set_ad_channel_spend for channel allocation, set_targeted_ad_spend for per-group targeting.",
-      "operations": "CRITICAL: (1) REDUCES OUTAGE PROBABILITY - At $0: ~3% daily outage risk (~1/month). At $500: ~1.1% daily (~3/year). (2) Speeds up issue resolution. The global issue-resolution pool is partitioned by customer group: each group g draws Poisson((base_rate + scale_g \u00d7 spend) \u00d7 n_g / total_open_issues), where scale_g = 0.25 for individual groups (S*, D_S*) and 0.05 for enterprise groups (E*, D_E*). So $1 of ops spend resolves ~0.25 individual issues/day vs ~0.05 enterprise issues/day. WARNING: Without ops spending, frequent outages damage reputation and cause churn!",
+      "operations": "CRITICAL: (1) REDUCES OUTAGE PROBABILITY - At $0: ~3% daily outage risk (~1/month). At $500: ~1.1% daily (~3/year). (2) Speeds up issue resolution. The global issue-resolution pool is partitioned by customer group: each group g draws Poisson((base_rate + scale_g \u00d7 spend) \u00d7 n_g / total_open_issues), where scale_g = 0.3 for individual groups (S*, D_S*) and 0.05 for enterprise groups (E*, D_E*). So $1 of ops spend resolves ~0.3 individual issues/day vs ~0.05 enterprise issues/day. WARNING: Without ops spending, frequent outages damage reputation and cause churn!",
       "development": "Dev spending improves product quality (amplified by model tier). Global improvement = 0.006 \u00d7 ln(1 + global_spend/5000) per day (applies to all groups). Targeted per-group improvement = 0.030 \u00d7 ln(1 + targeted_spend/5000) per day (5\u00d7 coefficient, applies to that group only, stacks with global). delivered_quality = (base_product_quality + q_shared_bonus + q_group_bonus) \u00d7 tier_multiplier."
     },
     "example_call": {
       "tool": "set_daily_spend",
       "arguments": {
-        "advertising": 800,
         "operations": 1200,
         "development": 600
-      }
-    }
-  },
-  {
-    "name": "set_ad_channel_spend",
-    "python_call": "novamind_api.marketing.set_ad_channel_spend(...)",
-    "category": "Marketing & Spend",
-    "description": "Set per-channel advertising budget allocation as percentages. Allows targeting specific customer groups.",
-    "parameters": {
-      "channel_percentages": {
-        "type": "Dict[str, float]",
-        "description": "Dictionary with channel names and percentage allocations (0.0 to 1.0). Values are normalized to sum to 1.0.",
-        "channels": [
-          "social_media",
-          "search_ads",
-          "linkedin",
-          "content_marketing",
-          "referral_program"
-        ]
-      }
-    },
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "social_media": {
-          "type": "number"
-        },
-        "search_ads": {
-          "type": "number"
-        },
-        "linkedin": {
-          "type": "number"
-        },
-        "content_marketing": {
-          "type": "number"
-        },
-        "referral_program": {
-          "type": "number"
-        }
-      }
-    },
-    "returns": {
-      "success": "Ad channel allocation updated (total budget=$500/day):\n  \u2022 Social Media Ads: 30% ($150/day)\n  \u2022 Search Engine Ads: 30% ($150/day)\n  ...",
-      "failure": "Invalid channels: {X}. Valid: {...} / At least one channel must have non-zero percentage"
-    },
-    "output_schema": {
-      "allocations": "Dict[str, float] \u2014 normalized percentages (0-1) per channel",
-      "spend": "Dict[str, float] \u2014 actual $/day per channel",
-      "total_budget": "float \u2014 total advertising budget per day",
-      "_access": "result['spend']['linkedin'] \u2192 LinkedIn daily spend in $"
-    },
-    "impact": "Different channels reach different customer groups with varying effectiveness. Use to target specific segments.",
-    "example_call": {
-      "tool": "set_ad_channel_spend",
-      "arguments": {
-        "social_media": 0.2,
-        "search_ads": 0.3,
-        "linkedin": 0.3,
-        "content_marketing": 0.1,
-        "referral_program": 0.1
       }
     }
   },
@@ -127,11 +56,11 @@
     "name": "set_targeted_ad_spend",
     "python_call": "novamind_api.marketing.set_targeted_ad_spend(...)",
     "category": "Marketing & Spend",
-    "description": "Set ADDITIONAL per-group per-channel ad spend on top of the overall channel allocation. Allows precise targeting of specific customer groups via specific channels.",
+    "description": "Set per-(channel, group) ad spend. THIS IS THE ONLY WAY TO SPEND ON ADVERTISING \u2014 every dollar must be allocated to a specific (channel, group) pair.",
     "parameters": {
       "targeted_spend": {
         "type": "Dict[str, Dict[str, float]]",
-        "description": "Dictionary of {channel_id: {group_id: additional_dollars_per_day}}. This spend is ADDED to the normal channel allocation, not a replacement.",
+        "description": "Dictionary of {channel_id: {group_id: dollars_per_day}}. This is the FULL ad budget (not additive on top of any channel allocation \u2014 there is no channel allocation).",
         "channels": [
           "social_media",
           "search_ads",
@@ -147,7 +76,7 @@
       "properties": {
         "targeted_spend": {
           "type": "object",
-          "description": "{channel_id: {group_id: additional_$/day}}",
+          "description": "{channel_id: {group_id: $/day}}",
           "additionalProperties": {
             "type": "object",
             "additionalProperties": {
@@ -161,15 +90,15 @@
       ]
     },
     "returns": {
-      "success": "Targeted ad spend updated (extra $300/day on top of channel allocation):\n  \u2022 LinkedIn Ads \u2192 E1: +$200/day\n  \u2022 LinkedIn Ads \u2192 E2: +$100/day",
+      "success": "Ad spend updated (total $300/day):\n  \u2022 LinkedIn Ads \u2192 E1: $200/day\n  \u2022 LinkedIn Ads \u2192 E2: $100/day",
       "failure": "Invalid channels: {X}. Valid: {...} / Invalid group IDs for channel 'X': {Y}"
     },
     "output_schema": {
       "targeted_spend": "Dict[str, Dict[str, float]] \u2014 {channel: {group: $/day}}",
-      "total_extra_per_day": "float \u2014 total additional ad spend per day",
-      "_access": "result['targeted_spend']['linkedin']['E1'] \u2192 E1's extra LinkedIn spend"
+      "total_per_day": "float \u2014 total ad spend per day",
+      "_access": "result['targeted_spend']['linkedin']['E1'] \u2192 E1's LinkedIn spend"
     },
-    "impact": "Extra dollars are deducted from cash daily as advertising cost. In lead generation, each (channel, group) pair gets its normal allocation PLUS the targeted amount. Use this to boost acquisition of high-value segments without changing the overall channel split.",
+    "impact": "Each (channel, group) pair generates leads at rate `spend \u00d7 leads_per_1000_dollars[channel][group] / 1000`. Total ad spend is deducted from cash daily as advertising cost.",
     "example_call": {
       "tool": "set_targeted_ad_spend",
       "arguments": {
