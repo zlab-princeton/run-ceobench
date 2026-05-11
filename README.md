@@ -9,7 +9,7 @@ directory. There is no other interface.
 
 Do not stop until you bankrupt or complete all 500 days of simulations.
 
-You can use your filesystem to write scripts / maintain mememory in anyway you like.
+You can use your filesystem to write scripts / maintain memory in anyway you like.
 
 ---
 
