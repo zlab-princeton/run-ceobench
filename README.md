@@ -13,6 +13,8 @@ Do not stop until you bankrupt or complete all 500 days of simulations.
 
 You can use your filesystem to write scripts / maintain memory in anyway you like.
 
+You are only allowed to play it once (one create-session allowed). The task is very difficult. Make sure you observe, analyze, act, advance a week, and observe, analyze, act again before advancing another week.
+
 ---
 
 ## ⚠️ Rules
