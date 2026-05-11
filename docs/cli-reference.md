@@ -97,21 +97,6 @@ novamind-operation python-c "import novamind_api as nm; nm.pricing.set_prices(A=
 
 ---
 
-### Direct Tool Calls
-
-#### `novamind-operation call <tool_name> [--args '{...}'] [--session ID]`
-Call a simulator tool directly with JSON arguments.
-
-```bash
-novamind-operation call set_prices --args '{"A": 29.99, "B": 69.99, "C": 179.99}'
-novamind-operation call get_cost_info
-novamind-operation call start_research_project --args '{"tier": "T3"}'
-```
-
-See `docs/tools-reference.md` for all available tools and their parameters.
-
----
-
 ### Database Queries
 
 #### `novamind-operation query "<SQL>" [--session ID]`

@@ -76,10 +76,13 @@ analysis files, whatever helps you decide. Common things you can do:
 ```bash
 ./novamind-operation status
 ./novamind-operation query "<any read-only SQL>"
-./novamind-operation call <tool> --args '{...}'
 ./novamind-operation python my_strategy.py
+./novamind-operation python-c "<inline code>"
 ./novamind-operation history
 ```
+
+All simulator tools are accessed via the Python API (`import novamind_api as nm`)
+— see `docs/tools-reference.md`.
 
 When you're ready, advance the simulation with `next-week`. This is the only
 command that moves time forward by 7 days. It requires:

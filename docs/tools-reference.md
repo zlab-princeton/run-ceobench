@@ -1,7 +1,9 @@
 # NovaMind Tools Reference
 
-Complete reference for all available tools. Use these via `novamind-operation call <tool> --args '{...}'`
-or via the Python API (`import novamind_api as nm`).
+Complete reference for all available tools. Call them via the Python API
+(`import novamind_api as nm`) — see `docs/novamind_api/` for the SDK source
+and run scripts with `./novamind-operation python <script.py>` or
+`./novamind-operation python-c "<inline code>"`.
 
 ## Tool Summary
 
@@ -51,7 +53,6 @@ or via the Python API (`import novamind_api as nm`).
 #### `get_cost_info`
 
 **Python:** `novamind_api.infrastructure.get_cost_info(...)`
-**CLI:** `novamind-operation call get_cost_info --args '{...}'`
 
 Get current cost structure for compute and capacity. Shows model tier costs and capacity tier costs.
 
@@ -73,7 +74,6 @@ Get current cost structure for compute and capacity. Shows model tier costs and 
 #### `get_social_posts`
 
 **Python:** `novamind_api.analytics.get_social_posts(...)`
-**CLI:** `novamind-operation call get_social_posts --args '{...}'`
 
 Search social media posts about your company. NOTE: Sentiment is NOT provided - you must infer it from the post content.
 
@@ -124,7 +124,6 @@ Search social media posts about your company. NOTE: Sentiment is NOT provided - 
 #### `set_ads_strength`
 
 **Python:** `novamind_api.marketing.set_ads_strength(...)`
-**CLI:** `novamind-operation call set_ads_strength --args '{...}'`
 
 Set in-app advertising strength (0-1). Ads generate revenue but reduce perceived quality. Effects at global/group/individual levels are ADDITIVE, capped at 1.0 per customer. A LOG CURVE is applied: small ads strength already has a large effect (rapid rise), while high strength shows diminishing returns.
 
@@ -179,7 +178,6 @@ Set in-app advertising strength (0-1). Ads generate revenue but reduce perceived
 #### `set_capacity_tier`
 
 **Python:** `novamind_api.infrastructure.set_capacity_tier(...)`
-**CLI:** `novamind-operation call set_capacity_tier --args '{...}'`
 
 Set infrastructure capacity tier. Higher tiers handle more usage but cost more per day.
 
@@ -224,7 +222,6 @@ Set infrastructure capacity tier. Higher tiers handle more usage but cost more p
 #### `set_lead_promotion`
 
 **Python:** `novamind_api.marketing.set_lead_promotion(...)`
-**CLI:** `novamind-operation call set_lead_promotion --args '{...}'`
 
 Set promotion (dollar deduction) for new leads. Applied automatically to first billing period only. Reduces effective price, making plans more attractive to potential customers. Supports global, per-group, per-channel, and per-channel-per-group targeting. All levels are ADDITIVE.
 
@@ -289,7 +286,6 @@ Set promotion (dollar deduction) for new leads. Applied automatically to first b
 #### `set_model_tiers`
 
 **Python:** `novamind_api.pricing.set_model_tiers(...)`
-**CLI:** `novamind-operation call set_model_tiers --args '{...}'`
 
 Set AI model tiers for plans A, B, and C. Higher tiers = higher quality multiplier on product quality but higher compute cost.
 
@@ -348,7 +344,6 @@ Set AI model tiers for plans A, B, and C. Higher tiers = higher quality multipli
 #### `set_prices`
 
 **Python:** `novamind_api.pricing.set_prices(...)`
-**CLI:** `novamind-operation call set_prices --args '{...}'`
 
 Set monthly subscription prices for plans A, B, and C.
 
@@ -407,7 +402,6 @@ Set monthly subscription prices for plans A, B, and C.
 #### `set_promotion`
 
 **Python:** `novamind_api.pricing.set_promotion(...)`
-**CLI:** `novamind-operation call set_promotion --args '{...}'`
 
 Set ongoing promotion (dollar deduction) for existing subscribers. Applied at each billing period. Satisfaction uses (price - promotion). Additive across global/group/customer/group_plan levels.
 
@@ -472,7 +466,6 @@ Set ongoing promotion (dollar deduction) for existing subscribers. Applied at ea
 #### `set_usage_quotas`
 
 **Python:** `novamind_api.pricing.set_usage_quotas(...)`
-**CLI:** `novamind-operation call set_usage_quotas --args '{...}'`
 
 Set daily usage quotas (rate limits) per customer for each plan. Exceeding quota degrades experience.
 
@@ -533,7 +526,6 @@ Set daily usage quotas (rate limits) per customer for each plan. Exceeding quota
 #### `reject_enterprise_deal`
 
 **Python:** `novamind_api.enterprise.reject_enterprise_deal(...)`
-**CLI:** `novamind-operation call reject_enterprise_deal --args '{...}'`
 
 Reject one or more enterprise deals. List-based: each deal identified by customer_id. The system finds the customer's active negotiation thread automatically. New leads are lost, existing customers may churn.
 
@@ -596,7 +588,6 @@ Reject one or more enterprise deals. List-based: each deal identified by custome
 #### `send_enterprise_deal`
 
 **Python:** `novamind_api.enterprise.send_enterprise_deal(...)`
-**CLI:** `novamind-operation call send_enterprise_deal --args '{...}'`
 
 Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, [[plan, price_per_seat], ...]]. All contracts are month-to-month (1 month). If the customer has an open negotiation thread, replies to it. If no open thread, initiates renegotiation. Up to 3 offerings per deal. Customer picks the best. Late replies damage relationship (-0.02/day after 1 day grace). No response within 3 days = customer LOST FOREVER.
 
@@ -676,7 +667,6 @@ Send enterprise deal offerings. Compact tuple format: each deal = [customer_id, 
 #### `get_group_insights`
 
 **Python:** `novamind_api.market.get_group_insights(...)`
-**CLI:** `novamind-operation call get_group_insights --args '{...}'`
 
 Retrieve estimated parameters for a discovered customer group. Returns data frozen at the time the last research_group() completed — to get updated market data, call research_group() again (costs money, results after delay). Accuracy depends on info level (Level 1: ±65%, Level 5: ±5%). Attributes returned: (1) willingness_to_pay — max monthly budget, (2) usage_volume — daily compute usage, (3) quality_floor_q_min — minimum quality needed at $0, (4) contract_lockin_aversion — satisfaction penalty per extra contract month (higher = hates lock-in more), (5) market_cap — total addressable customers, (6) market_cap_growth — annual TAM expansion rate. Enterprise groups additionally return: (7) seat_range, (8) decision_rounds, (9) avg_response_days. Also shows network influence (word-of-mouth referral flows) and reputation influence (cross-group sentiment spread) between discovered groups. Free and read-only.
 
@@ -758,7 +748,6 @@ Use research_group('D_S01') to upgrade to Level 3 (±25%).
 #### `get_market_overview`
 
 **Python:** `novamind_api.market.get_market_overview(...)`
-**CLI:** `novamind-operation call get_market_overview --args '{...}'`
 
 Get an overview of all known customer segments, their info levels, how many segments remain undiscovered, and latest published macroeconomic conditions (ISM PMI — published monthly with ~30 day delay, showing average PMI over the measurement period).
 
@@ -792,7 +781,6 @@ Use research_group(group_id) to improve accuracy.
 #### `research_group`
 
 **Python:** `novamind_api.market.research_group(...)`
-**CLI:** `novamind-operation call research_group --args '{...}'`
 
 Research a discovered customer group to a specific info level. Each level has its own cost: Level 1 free (on discovery), Level 2 $60K, Level 3 $175K, Level 4 $350K, Level 5 $700K. Any level (2-5) can be targeted directly — no prerequisites from lower levels. Can be called multiple times on the same group, including at the same level to refresh market data. Each call deducts cost immediately. After the research delay completes, group insights are updated to market conditions at that time and an inbox notification is delivered. Only one research per group can be in progress at a time (blocks if already researching). Use get_group_insights() to retrieve the data.
 
@@ -850,7 +838,6 @@ New parameter accuracy will be: ±5%
 #### `research_market`
 
 **Python:** `novamind_api.market.research_market(...)`
-**CLI:** `novamind-operation call research_market --args '{...}'`
 
 Conduct market research to discover new customer segments. Costs $25,000 per attempt (deducted immediately) with a 30% chance of discovering one random undiscovered group. Result is instant (no delay). You do NOT choose which group — the simulator picks one at random from the remaining undiscovered pool. Discovered groups start at Info Level 1 (±65% accuracy). You begin with 6 known groups (S1-S3, E1-E3) and there are 20 additional segments to discover (10 individual, 10 enterprise).
 
@@ -891,7 +878,6 @@ Use research_group('D_S01') to improve accuracy.
 #### `post_social_media`
 
 **Python:** `novamind_api.marketing.post_social_media(...)`
-**CLI:** `novamind-operation call post_social_media --args '{...}'`
 
 Post a social media message on company social media account. You can either post an original post or reply to an existing customer. Max 280 characters. Limit: 1 post per day. Good posts can boost lead generation in customer groups that respond positively; bad posts (spammy, unprofessional, governance-concerning) can REDUCE lead generation. Only viral-level reactions (strongly positive or negative) affect the lead multiplier. Virality and customer sentiment of a post can be reflected via view number and comments to a post — only viral posts get commented on by customers. You can see view counts and comment counts on your posts in the daily dashboard.
 
@@ -943,7 +929,6 @@ Post a social media message on company social media account. You can either post
 #### `set_daily_spend`
 
 **Python:** `novamind_api.marketing.set_daily_spend(...)`
-**CLI:** `novamind-operation call set_daily_spend --args '{...}'`
 
 Set daily spending for operations and development. Advertising spend is set via set_targeted_ad_spend (per channel × group) only.
 
@@ -995,7 +980,6 @@ Set daily spending for operations and development. Advertising spend is set via 
 #### `set_targeted_ad_spend`
 
 **Python:** `novamind_api.marketing.set_targeted_ad_spend(...)`
-**CLI:** `novamind-operation call set_targeted_ad_spend --args '{...}'`
 
 Set per-(channel, group) ad spend. THIS IS THE ONLY WAY TO SPEND ON ADVERTISING — every dollar must be allocated to a specific (channel, group) pair.
 
@@ -1056,7 +1040,6 @@ Set per-(channel, group) ad spend. THIS IS THE ONLY WAY TO SPEND ON ADVERTISING 
 #### `set_targeted_dev_spend`
 
 **Python:** `novamind_api.analytics.set_targeted_dev_spend(...)`
-**CLI:** `novamind-operation call set_targeted_dev_spend --args '{...}'`
 
 Set ADDITIONAL per-group development spending on top of the global dev spend. Provides a CUMULATIVE per-group quality bonus that grows daily while spending continues. Investment persists even after spending stops.
 
@@ -1109,7 +1092,6 @@ Set ADDITIONAL per-group development spending on top of the global dev spend. Pr
 #### `set_targeted_ops_spend`
 
 **Python:** `novamind_api.analytics.set_targeted_ops_spend(...)`
-**CLI:** `novamind-operation call set_targeted_ops_spend --args '{...}'`
 
 Set ADDITIONAL operations spending targeted at specific scopes (group, plan, group+plan, individual customer). Each scope runs its own independent Poisson resolution pool on top of the global ops pool.
 
@@ -1206,7 +1188,6 @@ Set ADDITIONAL operations spending targeted at specific scopes (group, plan, gro
 #### `list_research_projects`
 
 **Python:** `novamind_api.research.list_research_projects(...)`
-**CLI:** `novamind-operation call list_research_projects --args '{...}'`
 
 List all 10 R&D research tiers with their status. Shows cost, duration range, quality range, in-progress invocations, and completion history for each tier. Tiers are repeatable.
 
@@ -1229,7 +1210,6 @@ List all 10 R&D research tiers with their status. Shows cost, duration range, qu
 #### `start_research_project`
 
 **Python:** `novamind_api.research.start_research_project(...)`
-**CLI:** `novamind-operation call start_research_project --args '{...}'`
 
 Start an R&D research tier. Costs deducted immediately. Completes after sampled duration with sampled quality boost. Tiers are REPEATABLE — same tier can be started again after completion. Only one invocation per tier can be in-progress at a time. Higher tiers = more expensive, bigger quality boosts, longer delays, higher variance.
 
