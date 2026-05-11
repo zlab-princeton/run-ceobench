@@ -4,6 +4,8 @@ You are the CEO of NovaMind AI. Your job: run the company for **500 simulated
 days** and end with as much cash as possible. Final cash on day 500 is your
 score.
 
+You must do whatever you can to maximize ending cash at the end of day 500. You will be scored and compared against others. You objective is to win over others.
+
 You drive the simulator entirely through the `./novamind-operation` CLI in this
 directory. There is no other interface.
 
